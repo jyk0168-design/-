@@ -1,0 +1,436 @@
+/* =========================================================
+   주소록 스타일시트 (외부 라이브러리 없이 순수 CSS)
+   구성: 1) 색·간격 변수  2) 기본  3) 상단 바  4) 안내 메시지
+         5) 버튼  6) 검색창  7) 목록 표  8) 입력 폼  9) 휴대폰(반응형)
+   ========================================================= */
+
+/* ---------- 1) 색·간격 변수: 여기만 바꾸면 전체 색이 바뀐다 ---------- */
+:root {
+  --navy: #1f3a60;          /* 상단 바, 기본 버튼 */
+  --navy-dark: #15294a;     /* 기본 버튼 마우스 올림 */
+  --text: #1f2933;          /* 본문 글자 */
+  --muted: #5f6b7a;         /* 보조 글자 */
+  --border: #d5dbe3;        /* 테두리 */
+  --bg: #f4f6f9;            /* 페이지 배경 */
+  --surface: #ffffff;       /* 카드·표 배경 */
+  --stripe: #f7f9fc;        /* 표 줄무늬 */
+  --hover: #e6eefa;         /* 표 줄 강조 */
+  --danger: #c62828;        /* 삭제 버튼, 오류 글씨 */
+  --danger-dark: #a11d1d;
+  --success-bg: #e7f5ea;    /* 안내 메시지 상자 */
+  --success-border: #2e7d32;
+  --success-text: #1b5e20;
+  --radius: 6px;
+}
+
+/* ---------- 2) 기본 ---------- */
+* {
+  box-sizing: border-box;   /* 너비에 테두리·안쪽 여백까지 포함 → 크기 계산이 쉬워짐 */
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* 본문 영역: 너무 넓게 퍼지지 않도록 최대 폭 제한 + 가운데 정렬 */
+main,
+.topbar-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+main {
+  padding-top: 24px;
+  padding-bottom: 48px;
+}
+
+h2 {
+  margin: 0 0 16px;
+  font-size: 1.4rem;
+}
+
+/* 키보드(Tab)로 이동할 때 현재 위치가 잘 보이도록 */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #5b9dff;
+  outline-offset: 2px;
+}
+
+/* ---------- 3) 상단 바 ---------- */
+.topbar {
+  background: var(--navy);
+  color: #fff;
+}
+
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  /* 왼쪽: 제목, 오른쪽: 메뉴 */
+  gap: 16px;
+  min-height: 56px;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.topbar a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.topbar nav {
+  display: flex;
+  gap: 4px;
+}
+
+.topbar nav a {
+  padding: 6px 12px;
+  border-radius: var(--radius);
+}
+
+.topbar nav a:hover,
+.topbar nav a[aria-current="page"] {   /* 현재 보고 있는 메뉴 강조 */
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ---------- 4) 안내(flash) 메시지: 초록 상자 ---------- */
+.flash {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  border-left-width: 5px;
+  border-radius: var(--radius);
+  color: var(--success-text);
+  font-weight: 600;
+}
+
+/* ---------- 5) 버튼 ---------- */
+/* <a>와 <button>에 같은 모양을 주기 위해 .btn 클래스를 공통으로 사용 */
+.btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font: inherit;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-primary {               /* 저장, 검색 */
+  background: var(--navy);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--navy-dark);
+}
+
+.btn-secondary {             /* 취소, 전체 보기 */
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+.btn-secondary:hover {
+  background: var(--bg);
+}
+
+.btn-small {                 /* 표 안의 수정·삭제 */
+  padding: 4px 10px;
+  font-size: 0.875rem;
+}
+
+.btn-edit {                  /* 수정: 남색 테두리 */
+  background: var(--surface);
+  border-color: var(--navy);
+  color: var(--navy);
+}
+.btn-edit:hover {
+  background: var(--navy);
+  color: #fff;
+}
+
+.btn-danger {                /* 삭제: 빨간색 */
+  background: var(--danger);
+  color: #fff;
+}
+.btn-danger:hover {
+  background: var(--danger-dark);
+}
+
+/* 삭제 버튼을 감싼 form이 줄바꿈되지 않게 */
+.inline-form {
+  display: inline;
+  margin: 0;
+}
+
+/* ---------- 6) 검색창 ---------- */
+.search {
+  display: flex;
+  flex-wrap: wrap;            /* 좁은 화면에서는 다음 줄로 */
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.search input {
+  flex: 1 1 220px;            /* 남는 폭을 검색칸이 차지 */
+}
+
+.result-count {
+  margin: 0 0 12px;
+  color: var(--muted);
+}
+
+.empty {
+  padding: 32px 16px;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+  color: var(--muted);
+}
+
+/* 화면에는 안 보이지만 화면 낭독기는 읽는 글자 (검색 라벨 등) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- 7) 목록 표 ---------- */
+.contacts {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.contacts th,
+.contacts td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.contacts th {
+  background: #eaeef4;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.contacts tbody tr:nth-child(even) {   /* 줄무늬: 짝수 줄 배경 */
+  background: var(--stripe);
+}
+
+.contacts tbody tr:hover {             /* 마우스를 올린 줄 강조 */
+  background: var(--hover);
+}
+
+.contacts .name {
+  font-weight: 600;
+}
+
+.contacts .actions {
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* 이메일·주소처럼 긴 값은 칸 안에서 줄바꿈 */
+.contacts td {
+  overflow-wrap: anywhere;
+}
+
+/* ---------- 8) 입력 폼 ---------- */
+.contact-form {
+  max-width: 640px;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+/* 한 항목 = [라벨 | 입력칸] 두 칸 격자. 오류 메시지는 입력칸 아래 */
+.field {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  column-gap: 16px;
+  row-gap: 4px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.field label {
+  font-weight: 600;
+}
+
+.field .error {
+  grid-column: 2;            /* 오류는 입력칸과 같은 열(오른쪽)에 */
+}
+
+.field-textarea {
+  align-items: start;        /* 메모는 라벨을 위쪽에 맞춤 */
+}
+.field-textarea label {
+  padding-top: 8px;
+}
+
+.req {
+  color: var(--danger);
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--text);
+  font: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* 서버 검증에서 틀린 칸: 빨간 테두리 */
+input[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  border-color: var(--danger);
+  background: #fff7f7;
+}
+
+.error {
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+.error-summary {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  background: #fff7f7;
+  font-weight: 600;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 24px;
+  padding-left: 136px;       /* 라벨 폭(120) + 간격(16)만큼 들여서 입력칸과 정렬 */
+}
+
+/* ---------- 9) 휴대폰 등 좁은 화면 (폭 640px 이하) ---------- */
+@media (max-width: 640px) {
+  main {
+    padding-top: 16px;
+  }
+
+  /* 상단 바: 제목과 메뉴를 위아래로 */
+  .topbar-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .topbar nav {
+    margin-left: -12px;      /* 메뉴 글자를 제목과 왼쪽 정렬 */
+  }
+
+  /* 표 → 카드: 줄(tr)마다 상자 하나, 칸(td)마다 "라벨: 값" 한 줄 */
+  .contacts,
+  .contacts tbody,
+  .contacts tr,
+  .contacts td {
+    display: block;
+  }
+  .contacts {
+    border: 0;
+    background: transparent;
+  }
+  .contacts thead {
+    display: none;           /* 표 머리글 대신 각 칸의 data-label을 보여 준다 */
+  }
+  .contacts tbody tr {
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .contacts tbody tr:nth-child(even) {
+    background: var(--surface);   /* 카드에서는 줄무늬 대신 테두리로 구분 */
+  }
+  .contacts td {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 0;
+  }
+  .contacts td::before {
+    content: attr(data-label);   /* HTML의 data-label 값을 글자로 표시 */
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .contacts td:empty {
+    display: none;           /* 비어 있는 이메일·주소 줄은 숨김 */
+  }
+  .contacts .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+  }
+  .contacts .actions::before {
+    content: none;
+  }
+  .btn-small {               /* 손가락으로 누르기 쉽게 버튼을 크게 */
+    padding: 8px 16px;
+  }
+
+  /* 폼: 라벨을 입력칸 위로 */
+  .contact-form {
+    padding: 16px;
+  }
+  .field {
+    grid-template-columns: 1fr;
+  }
+  .field .error {
+    grid-column: 1;
+  }
+  .field-textarea label {
+    padding-top: 0;
+  }
+  .form-actions {
+    padding-left: 0;
+  }
+  .form-actions .btn {
+    flex: 1;                 /* 저장·취소 버튼을 반씩 채움 */
+    text-align: center;
+  }
+}

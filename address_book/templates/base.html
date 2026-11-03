@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <!-- 모바일에서도 화면 폭에 맞게 보이도록 설정 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 페이지마다 title 블록을 바꿀 수 있고, 안 바꾸면 "주소록"이 쓰인다 -->
+  <title>{% block title %}주소록{% endblock %}</title>
+  <!-- static/style.css 연결. url_for('static', ...)가 /static/style.css 주소를 만들어 준다 -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <!-- 상단 바: 모든 페이지에 공통으로 표시 -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1><a href="{{ url_for('index') }}">주소록</a></h1>
+      <nav aria-label="주 메뉴">
+        {# aria-current: 지금 보고 있는 메뉴를 표시 (CSS에서 강조, 화면 낭독기도 읽음) #}
+        <a href="{{ url_for('index') }}"
+           {% if request.endpoint == 'index' %}aria-current="page"{% endif %}>목록</a>
+        <a href="{{ url_for('add') }}"
+           {% if request.endpoint == 'add' %}aria-current="page"{% endif %}>새 연락처</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- flash 메시지: redirect 직후 한 번만 표시되고 사라진다 (초록 상자) -->
+    {% with messages = get_flashed_messages() %}
+      {% for message in messages %}
+        <p class="flash" role="status">{{ message }}</p>
+      {% endfor %}
+    {% endwith %}
+
+    <!-- 각 페이지(자식 템플릿)의 본문이 이 자리에 들어간다 -->
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
