@@ -1,0 +1,77 @@
+{# 등록·수정 공용 폼: base.html을 상속
+   contact 변수가 있으면 수정 화면, 없으면 등록 화면으로 동작한다.
+   errors는 {항목 이름: 오류 메시지} dict. #}
+{% extends "base.html" %}
+
+{# 화면 제목과 폼 전송 주소를 모드에 따라 정한다 #}
+{% if contact %}
+  {% set heading = "연락처 수정" %}
+  {% set action = url_for('edit', contact_id=contact.id) %}
+{% else %}
+  {% set heading = "새 연락처" %}
+  {% set action = url_for('add') %}
+{% endif %}
+
+{# 항목 아래에 오류 메시지를 표시하는 매크로 (같은 코드를 5번 반복하지 않기 위해) #}
+{% macro field_error(key) %}
+  {% if errors.get(key) %}
+    <span class="error" id="{{ key }}-error">{{ errors[key] }}</span>
+  {% endif %}
+{% endmacro %}
+
+{# 틀린 칸에 붙이는 속성: 빨간 테두리(CSS) + 화면 낭독기에 오류 메시지 연결 #}
+{% macro invalid_attrs(key) -%}
+  {% if errors.get(key) %}aria-invalid="true" aria-describedby="{{ key }}-error"{% endif %}
+{%- endmacro %}
+
+{% block title %}{{ heading }} - 주소록{% endblock %}
+
+{% block content %}
+  <h2>{{ heading }}</h2>
+
+  {# form.get(...)으로 기존 값(수정) 또는 오류 시 입력값을 채운다.
+     novalidate: 브라우저 검사를 끄고 서버 검사 메시지를 보여 준다. #}
+  <form class="contact-form" method="post" action="{{ action }}" novalidate>
+    {% if errors %}
+      <p class="error error-summary" role="alert">입력값을 확인해 주세요. ({{ errors|length }}개 항목)</p>
+    {% endif %}
+
+    {# .field 하나 = [라벨 | 입력칸] 한 줄, 오류는 입력칸 아래 #}
+    <div class="field">
+      <label for="name">이름 <span class="req">(필수)</span></label>
+      <input id="name" name="name" value="{{ form.get('name', '') }}" maxlength="30"
+             autocomplete="name" {{ invalid_attrs("name") }}>
+      {{ field_error("name") }}
+    </div>
+    <div class="field">
+      <label for="phone">전화번호 <span class="req">(필수)</span></label>
+      <input id="phone" name="phone" type="tel" value="{{ form.get('phone', '') }}"
+             maxlength="20" placeholder="010-1234-5678" autocomplete="tel"
+             {{ invalid_attrs("phone") }}>
+      {{ field_error("phone") }}
+    </div>
+    <div class="field">
+      <label for="email">이메일</label>
+      <input id="email" name="email" type="email" value="{{ form.get('email', '') }}"
+             placeholder="hong@example.com" autocomplete="email" {{ invalid_attrs("email") }}>
+      {{ field_error("email") }}
+    </div>
+    <div class="field">
+      <label for="address">주소</label>
+      <input id="address" name="address" value="{{ form.get('address', '') }}" maxlength="200"
+             {{ invalid_attrs("address") }}>
+      {{ field_error("address") }}
+    </div>
+    <div class="field field-textarea">
+      <label for="memo">메모</label>
+      <textarea id="memo" name="memo" rows="4" maxlength="1000"
+                {{ invalid_attrs("memo") }}>{{ form.get('memo', '') }}</textarea>
+      {{ field_error("memo") }}
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">저장</button>
+      <a href="{{ url_for('index') }}" class="btn btn-secondary">취소</a>
+    </div>
+  </form>
+{% endblock %}

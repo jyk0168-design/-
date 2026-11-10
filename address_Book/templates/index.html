@@ -1,0 +1,61 @@
+{# base.html의 공통 틀(제목, 상단 메뉴)을 그대로 물려받는다 #}
+{% extends "base.html" %}
+
+{# base.html의 content 블록 자리에 들어갈 본문 #}
+{% block content %}
+  <h2>연락처 목록</h2>
+
+  {# 검색창: GET 방식이라 검색어가 주소(/?q=...)에 남아 즐겨찾기·뒤로 가기가 된다 #}
+  <form class="search" method="get" action="{{ url_for('index') }}" role="search">
+    {# 라벨은 화면에서 숨기지만 화면 낭독기는 읽는다 #}
+    <label for="q" class="sr-only">검색어</label>
+    <input id="q" name="q" type="search" value="{{ q }}" placeholder="이름 또는 전화번호로 검색">
+    <button type="submit" class="btn btn-primary">검색</button>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">전체 보기</a>
+  </form>
+
+  {% if q %}
+    <p class="result-count">"{{ q }}" 검색 결과: {{ contacts|length }}건</p>
+  {% endif %}
+
+  {% if contacts %}
+    <table class="contacts">
+      <thead>
+        <tr>
+          <th scope="col">이름</th>
+          <th scope="col">전화번호</th>
+          <th scope="col">이메일</th>
+          <th scope="col">주소</th>
+          <th scope="col"><span class="sr-only">관리</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {# app.py에서 넘겨준 contacts를 한 줄씩 출력.
+           data-label: 휴대폰 화면에서 표 대신 카드로 보일 때 칸 이름으로 쓰인다.
+           td 안에 공백이 없어야 CSS의 :empty(빈 칸 숨김)가 동작한다. #}
+        {% for c in contacts %}
+          <tr>
+            <td class="name" data-label="이름">{{ c.name }}</td>
+            <td data-label="전화번호">{{ c.phone }}</td>
+            <td data-label="이메일">{{ c.email or "" }}</td>
+            <td data-label="주소">{{ c.address or "" }}</td>
+            <td class="actions">
+              {# 수정은 화면 이동이므로 링크(GET) #}
+              <a href="{{ url_for('edit', contact_id=c.id) }}" class="btn btn-small btn-edit">수정</a>
+              {# 삭제는 데이터를 바꾸므로 POST 폼. 확인 창에서 취소하면 전송하지 않는다 #}
+              <form method="post" action="{{ url_for('delete', contact_id=c.id) }}"
+                    class="inline-form"
+                    onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                <button type="submit" class="btn btn-small btn-danger">삭제</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% elif q %}
+    <p class="empty">검색 결과가 없습니다.</p>
+  {% else %}
+    <p class="empty">아직 등록된 연락처가 없습니다.</p>
+  {% endif %}
+{% endblock %}
