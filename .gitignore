@@ -1,0 +1,17 @@
+# 가상환경
+.venv/
+
+# 파이썬 캐시
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Flask 인스턴스 폴더(DB 파일 위치)와 DB 파일
+instance/
+*.db
+
+# 환경변수(비밀키 등)
+.env
+
+# OS 생성 파일
+.DS_Store
